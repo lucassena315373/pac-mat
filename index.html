@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAC-MAT — Desafio Matemático</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+
+    <!-- MENU -->
+    <section id="menuScreen" class="screen active">
+      <div class="menu-card">
+        <div class="logo-pac">PAC-<span>MAT</span></div>
+        <div class="subtitle">DESAFIO MATEMÁTICO</div>
+        <div class="mini-maze">
+          <div class="mini-pac"></div>
+          <div class="mini-ghost red"></div>
+          <div class="mini-ghost pink"></div>
+          <div class="mini-ghost blue"></div>
+          <div class="mini-ghost orange"></div>
+        </div>
+        <p>Resolva a pergunta, atravesse o labirinto e encontre a saída com a resposta correta!</p>
+        <div class="difficulty-box">
+          <div class="difficulty-title">ESCOLHA A DIFICULDADE</div>
+          <label class="difficulty-option easy"><input type="radio" name="difficulty" value="facil"><span>🟢 FÁCIL</span><small>Fantasmas mais lentos e menos perseguidores</small></label>
+          <label class="difficulty-option medium"><input type="radio" name="difficulty" value="medio" checked><span>🟡 MÉDIO</span><small>Velocidade e perseguição equilibradas</small></label>
+          <label class="difficulty-option hard"><input type="radio" name="difficulty" value="dificil"><span>🔴 DIFÍCIL</span><small>Fantasmas rápidos e perseguição intensa</small></label>
+        </div>
+        <button id="startBtn" class="main-btn">▶ JOGAR</button>
+        <button id="howBtn" class="secondary-btn">❔ COMO JOGAR</button>
+      </div>
+    </section>
+
+    <!-- LOGIN ADMIN -->
+    <section id="adminLoginScreen" class="screen">
+      <div class="panel admin-login-panel">
+        <h1>ÁREA DO ADMINISTRADOR</h1>
+        <p class="admin-muted">Acesse para configurar as perguntas do jogo.</p>
+        <label>Usuário</label>
+        <input id="adminUser" class="admin-input" type="text" autocomplete="username" placeholder="Digite o usuário">
+        <label>Senha</label>
+        <input id="adminPass" class="admin-input" type="password" autocomplete="current-password" placeholder="Digite a senha">
+        <div id="adminLoginError" class="admin-error"></div>
+        <button id="adminLoginBtn" class="main-btn">ENTRAR</button>
+        <button id="adminLoginBackBtn" class="secondary-btn">VOLTAR</button>
+      </div>
+    </section>
+
+    <!-- PAINEL ADMIN -->
+    <section id="adminScreen" class="screen admin-screen">
+      <div class="admin-shell">
+        <div class="admin-header">
+          <div>
+            <h1>⚙ PAINEL ADMINISTRADOR</h1>
+            <p>Gerencie configurações, perguntas e conjuntos salvos para as partidas.</p>
+          </div>
+          <button id="adminLogoutBtn" class="secondary-btn small-btn">SAIR</button>
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-box">
+            <h2>🎯 Configuração da partida</h2>
+            <label for="questionCount">Quantidade de perguntas por partida</label>
+            <input id="questionCount" class="admin-input" type="number" min="1" value="5">
+            <label for="phaseTime">Tempo de cada fase (minutos)</label>
+            <input id="phaseTime" class="admin-input" type="number" min="1" max="60" value="3">
+            <p class="admin-muted">O jogo usará o tempo definido em todas as fases.</p>
+            <button id="saveSettingsBtn" class="main-btn">SALVAR CONFIGURAÇÃO</button>
+          </div>
+
+          <div class="admin-box">
+            <h2>🔐 Acesso do administrador</h2>
+            <label for="newAdminUser">Novo usuário</label>
+            <input id="newAdminUser" class="admin-input" type="text" autocomplete="off" placeholder="Digite o novo usuário">
+            <label for="newAdminPass">Nova senha</label>
+            <input id="newAdminPass" class="admin-input" type="password" autocomplete="new-password" placeholder="Digite a nova senha">
+            <p class="admin-muted">Altere o usuário e a senha usados para entrar no painel.</p>
+            <button id="saveCredentialsBtn" class="main-btn">SALVAR USUÁRIO E SENHA</button>
+          </div>
+
+          <div class="admin-box">
+            <h2>➕ Nova pergunta</h2>
+            <label>Pergunta</label>
+            <textarea id="newQuestion" class="admin-input admin-textarea" placeholder="Digite a pergunta"></textarea>
+            <div class="answers-form">
+              <div><label>A</label><input id="ans0" class="admin-input" placeholder="Resposta A"></div>
+              <div><label>B</label><input id="ans1" class="admin-input" placeholder="Resposta B"></div>
+              <div><label>C</label><input id="ans2" class="admin-input" placeholder="Resposta C"></div>
+              <div><label>D</label><input id="ans3" class="admin-input" placeholder="Resposta D"></div>
+            </div>
+            <label>Resposta correta</label>
+            <select id="correctAnswer" class="admin-input">
+              <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+            </select>
+            <button id="addQuestionBtn" class="main-btn">ADICIONAR PERGUNTA</button>
+          </div>
+        </div>
+
+        <div class="admin-box library-box">
+          <div class="bank-title-row">
+            <div>
+              <h2>📚 Biblioteca de conjuntos</h2>
+              <p class="admin-muted">Salve diferentes conjuntos de perguntas e carregue qualquer um quando quiser.</p>
+            </div>
+            <div class="current-set">Conjunto atual: <b id="currentSetName">Conjunto principal</b></div>
+          </div>
+          <div class="library-save-row">
+            <input id="setName" class="admin-input" type="text" maxlength="60" placeholder="Nome do conjunto (ex.: 8º ano — Ângulos)">
+            <button id="saveSetBtn" class="main-btn small-btn">SALVAR CONJUNTO</button>
+          </div>
+          <div id="setLibrary" class="set-library"></div>
+        </div>
+
+        <div class="admin-box question-bank-box">
+          <div class="bank-title-row">
+            <h2>📚 Banco de perguntas</h2>
+            <div>Ativas: <b id="activeCount">0</b> | Total: <b id="totalCount">0</b></div>
+          </div>
+          <div id="questionBank" class="question-bank"></div>
+        </div>
+
+        <button id="adminBackBtn" class="secondary-btn">VOLTAR AO MENU</button>
+      </div>
+    </section>
+
+    <!-- COMO JOGAR -->
+    <section id="howScreen" class="screen">
+      <div class="panel how-panel">
+        <h1>COMO JOGAR</h1>
+        <div class="rules">
+          <p>🧠 <b>1.</b> Leia a pergunta antes de entrar no labirinto.</p>
+          <p>🎮 <b>2.</b> Use as <b>setas do teclado</b> ou WASD para mover o personagem.</p>
+          <p>👹 <b>3.</b> Fuja dos monstros enquanto procura uma das 4 saídas.</p>
+          <p>🚪 <b>4.</b> Cada saída representa uma resposta.</p>
+          <p>⭐ <b>5.</b> Entre na saída correta para ganhar pontos e avançar.</p>
+          <p>❤️ <b>6.</b> Se um monstro pegar você, perde uma vida e volta para o centro do labirinto.</p>
+          <p>⏱️ <b>7.</b> Cada fase tem 3 minutos. Você tem 5 vidas.</p>
+        </div>
+        <button id="backHowBtn" class="main-btn">VOLTAR</button>
+      </div>
+    </section>
+
+    <!-- JOGO -->
+    <section id="gameScreen" class="screen game-screen">
+      <header class="hud">
+        <div>❤️ Vidas: <b id="lives">3</b></div>
+        <div>⭐ Pontos: <b id="score">0</b></div>
+        <div>⏱️ Tempo: <b id="timer">00:00</b></div>
+        <div>🎯 Fase: <b id="level">1</b>/<span id="totalLevels">5</span></div>
+        <div>👾 Nível: <b id="difficultyHud">Médio</b></div>
+      </header>
+
+      <div class="question-panel">
+        <div class="question-title">DESAFIO</div>
+        <div id="questionText"></div>
+      </div>
+
+      <div class="game-layout">
+        <div class="answer-list">
+          <div class="answer-title">OPÇÕES DE SAÍDA</div>
+          <div id="answerChoices"></div>
+          <div class="controls-note">⌨️ Setas / WASD<br>📱 Use os botões na tela no celular</div>
+        </div>
+
+        <div class="maze-wrap">
+          <div id="maze" class="maze" aria-label="Labirinto do jogo"></div>
+          <div id="mobileControls" class="mobile-controls">
+            <button data-dir="up">▲</button>
+            <div>
+              <button data-dir="left">◀</button>
+              <button data-dir="down">▼</button>
+              <button data-dir="right">▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTAGEM REGRESSIVA -->
+    <div id="countdownOverlay" class="countdown-overlay" aria-hidden="true">
+      <div class="countdown-card">
+        <div class="countdown-label">DESAFIO MATEMÁTICO</div>
+        <div id="countdownQuestion" class="countdown-question"></div>
+        <div id="countdownNumber" class="countdown-number">3</div>
+      </div>
+    </div>
+
+    <!-- RESULTADO -->
+    <section id="resultScreen" class="screen">
+      <div id="resultCard" class="result-card">
+        <div id="resultIcon" class="result-icon">✓</div>
+        <h1 id="resultTitle">RESPOSTA CORRETA!</h1>
+        <p id="resultMessage"></p>
+        <div id="resultPoints" class="result-points"></div>
+        <button id="nextBtn" class="main-btn">PRÓXIMA FASE</button>
+      </div>
+    </section>
+
+    <!-- GAME OVER -->
+    <section id="gameOverScreen" class="screen">
+      <div class="result-card">
+        <div class="result-icon wrong">✕</div>
+        <h1>FIM DE JOGO</h1>
+        <p>Suas 5 tentativas acabaram.</p>
+        <p id="gameOverReason" class="admin-muted"></p>
+        <div class="final-box">Pontuação: <b id="gameOverScore">0</b></div>
+        <button id="restartBtn" class="main-btn">JOGAR NOVAMENTE</button>
+        <button id="menuOverBtn" class="secondary-btn">VOLTAR AO MENU</button>
+      </div>
+    </section>
+
+    <!-- VITÓRIA -->
+    <section id="victoryScreen" class="screen">
+      <div class="result-card victory">
+        <div class="trophy">🏆</div>
+        <h1>PARABÉNS!</h1>
+        <p>Você completou todas as fases!</p>
+        <div class="final-box">
+          ⭐ Pontuação final: <b id="finalScore">0</b><br>
+          ⏱️ Tempo: <b id="finalTime">00:00</b><br>
+          ❤️ Vidas restantes: <b id="finalLives">0</b>
+        </div>
+        <button id="playAgainBtn" class="main-btn">JOGAR NOVAMENTE</button>
+        <button id="menuVictoryBtn" class="secondary-btn">VOLTAR AO MENU</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="questions.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
